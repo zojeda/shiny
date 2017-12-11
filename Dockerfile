@@ -22,6 +22,8 @@ RUN apt-get update && apt-get install -y -t unstable \
 
 EXPOSE 3838
 
+RUN mkdir -p /var/log/shiny-server && chgrp -R 0 /var/log/shiny-server && chmod -R g=u /var/log/shiny-server
+
 COPY shiny-server.sh /usr/bin/shiny-server.sh
 
 CMD ["/usr/bin/shiny-server.sh"]
