@@ -1,9 +1,9 @@
-Docker for Shiny Server
+Docker for Shiny Server (openshift ready)
 =======================
 
 This is a Dockerfile for Shiny Server on Debian "testing". It is based on the r-base image.
 
-The image is available from [Docker Hub](https://registry.hub.docker.com/u/rocker/shiny/).
+The image is available from [Docker Hub](https://registry.hub.docker.com/u/apgye/shiny/).
 
 As of January 2017, the Shiny Server log is written to `stdout` and can be viewed using `docker logs`. The logs for individual apps are in the `/var/log/shiny-server` directory, as described in the [Shiny Server Administrator's Guide]( http://docs.rstudio.com/shiny-server/#application-error-logs)
 
@@ -12,7 +12,7 @@ As of January 2017, the Shiny Server log is written to `stdout` and can be viewe
 To run a temporary container with Shiny Server:
 
 ```sh
-docker run --rm -p 3838:3838 rocker/shiny
+docker run --rm -p 3838:3838 apgye/shiny
 ```
 
 
@@ -22,7 +22,7 @@ To expose a directory on the host to the container use `-v <host_dir>:<container
 docker run --rm -p 3838:3838 \
     -v /srv/shinyapps/:/srv/shiny-server/ \
     -v /srv/shinylog/:/var/log/shiny-server/ \
-    rocker/shiny
+    apgye/shiny
 ```
 
 If you have an app in /srv/shinyapps/appdir, you can run the app by visiting http://localhost:3838/appdir/. (If using boot2docker, visit http://192.168.59.103:3838/appdir/)
@@ -34,7 +34,7 @@ In a real deployment scenario, you will probably want to run the container in de
 docker run -d -p 80:3838 \
     -v /srv/shinyapps/:/srv/shiny-server/ \
     -v /srv/shinylog/:/var/log/shiny-server/ \
-    rocker/shiny
+    apgye/shiny
 ```
 
 
