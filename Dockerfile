@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y -t unstable \
     pandoc-citeproc \
     libcurl4-gnutls-dev \
     libcairo2-dev/unstable \
-    libxt-dev && \
+    libxt-dev \
+    libnss-wrapper gettext && \
     wget --no-verbose https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION -O "version.txt" && \
     VERSION=$(cat version.txt)  && \
     wget --no-verbose "https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/shiny-server-$VERSION-amd64.deb" -O ss-latest.deb && \
@@ -25,5 +26,15 @@ EXPOSE 3838
 RUN mkdir -p /var/log/shiny-server && chgrp -R 0 /var/log/shiny-server && chmod -R g=u /var/log/shiny-server
 
 COPY shiny-server.sh /usr/bin/shiny-server.sh
+COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 
-CMD ["/usr/bin/shiny-server.sh"]
+ENV USER_NAME=shiny NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
+RUN touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} && \ 
+	chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} &&\
+	chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
+ADD passwd.template /passwd.template
+ADD nss_wrapper.sh /nss_wrapper.sh
+
+
+ENTRYPOINT ["/nss_wrapper.sh"]
+CMD ["shiny-server.sh"]
